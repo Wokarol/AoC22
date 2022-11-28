@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32929.385
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AoC22", "AoC22.csproj", "{BA97D860-18EF-4A8D-9AA0-DDBB4D9E16F7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "AoCTests\Tests.csproj", "{0CC6FF5E-D720-4703-B343-ADB4D0DE0BD7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Puzzles", "Puzzles\Puzzles.csproj", "{F769DBFD-058C-4251-9728-BFAB97EE0D09}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{BA97D860-18EF-4A8D-9AA0-DDBB4D9E16F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BA97D860-18EF-4A8D-9AA0-DDBB4D9E16F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BA97D860-18EF-4A8D-9AA0-DDBB4D9E16F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BA97D860-18EF-4A8D-9AA0-DDBB4D9E16F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CC6FF5E-D720-4703-B343-ADB4D0DE0BD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CC6FF5E-D720-4703-B343-ADB4D0DE0BD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CC6FF5E-D720-4703-B343-ADB4D0DE0BD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CC6FF5E-D720-4703-B343-ADB4D0DE0BD7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F769DBFD-058C-4251-9728-BFAB97EE0D09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F769DBFD-058C-4251-9728-BFAB97EE0D09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F769DBFD-058C-4251-9728-BFAB97EE0D09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F769DBFD-058C-4251-9728-BFAB97EE0D09}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

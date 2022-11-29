@@ -1,9 +1,26 @@
-﻿using Puzzles;
+﻿using AoC22;
 
-// See https://aka.ms/new-console-template for more information
+const int START_DAY = 1;
+const int STOP_DAY = 25;
 
-var day1 = new Puzzle();
+var logger = new ConsoleLogger();
 
-var result = Puzzle.GetGenericZero<int>();
+for (int i = START_DAY; i <= STOP_DAY; i++)
+{
+	Puzzle puzzle;
+	try
+	{
+		puzzle = Utils.GetClassOfType<Puzzle>($"Day{i}", logger, Utils.FullPath(i));
+	}
+	catch (System.Exception e)
+	{
+		logger.Log(e.Message);
+		continue;
+	}
 
-Console.WriteLine("Day 1 is zero: " + result);
+    puzzle.Setup();
+
+    puzzle.SolvePart1();
+
+    puzzle.SolvePart2();
+}

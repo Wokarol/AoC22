@@ -13,14 +13,14 @@ public static class Utils
 
     public static T GetClassOfType<T>(string className, params object?[]? args)
     {
-        var day = typeof(T).Assembly.GetTypes()
+        var genericType = typeof(T).Assembly.GetTypes()
             .Where(t => t.IsAssignableTo(typeof(T)))
             .FirstOrDefault(t => t.Name == className);
 
-        if (day is null)
+        if (genericType is null)
             throw new Exception($"There is no class named {className}");
 
-        if (Activator.CreateInstance(day, args) is not T instance)
+        if (Activator.CreateInstance(genericType, args) is not T instance)
             throw new Exception($"Somehow the class {className} does not implement {nameof(T)}... which should be impossible");
 
         return instance;
@@ -28,7 +28,7 @@ public static class Utils
 
     #endregion
 
-    #region IO File Readings
+    #region IO File Reading
 
     public static bool FileExists(string path) => File.Exists(path);
 
@@ -76,6 +76,12 @@ public static class Utils
         return dict.TryGetValue(key, out TValue? value) ? value : defVal;
     }
 
+    // works better on a collection with an Odd amount of elements
+    public static T Median<T>(this IList<T> presortedCollection)
+    {
+        return presortedCollection[presortedCollection.Count / 2];
+    }
+
     #endregion
 
     #region Conversion Helpers
@@ -91,18 +97,31 @@ public static class Utils
 
     #endregion
 
-
     #region Misc
 
-    private static readonly Dictionary<int, int> _pascalLookup = new();
-    // Pascal's Triangle: f(5) = 1 + 2 + 3 + 4 + 5 = 15 = n(n+1)/2
-    /// <summary>Index starts at 1</summary>
-    public static int GetPascals(int index)
+    private static readonly Dictionary<int, int> _triangleLookup = new();
+    /// <summary>Returns sum of 1 + 2 + ... + n-1 + n. Also known as Pascal's Triangle. 
+    /// Like Factorial but for addition instead. Same result as n(n+1)/2</summary>
+    /// <param name="n">n starts at 1. A 0 would just return 0</param>
+    public static int GetTriangleNumber(int n)
     {
-        if (!_pascalLookup.TryGetValue(index, out int result))
+        if (!_triangleLookup.TryGetValue(n, out int result))
         {
-            result = (index * (index + 1)) >> 1;
-            _pascalLookup.Add(index, result);
+            result = (n * (n + 1)) >> 1;
+            _triangleLookup.Add(n, result);
+        }
+        return result;
+    }
+
+    private static readonly Dictionary<int, int> _fibonacciLookup = new() { { 0, 0 }, { 1, 1 } };
+    /// <summary>The famous Fibonacci sequence: 0, 1, 1, 2, 3, 5, 8, 13, 21, ...</summary>
+    public static int GetFibonacci(int n)
+    {
+        if (n < 0) return 0; // avoids stackoverflow exception
+        if (!_fibonacciLookup.TryGetValue(n, out int result))
+        {
+            result = GetFibonacci(n - 2) + GetFibonacci(n - 1);
+            _fibonacciLookup.Add(n, result);
         }
         return result;
     }
@@ -119,9 +138,13 @@ public static class Utils
         return result;
     }
 
+    // TODO: Make a re-usable dictionary type designed for recursive lookups. Override the `this[]` accessor for safety
+
     private static readonly Dictionary<int, int> _miscSequence = new();
     /// <summary>
-    /// For sequences that build from previous values. Define a rule like (dict, index) => dict[index - 1] + dict[index - 2];
+    /// For sequences that build from previous values. A Fibonacci sequence could go like:
+    /// (dict, index) => index == 0 ? 0 : index == 1 ? 1 : dict[index - 1] + dict[index - 2];
+    /// But that could throw exceptions if that index doesn't exist in the dictionary yet
     /// </summary>
     public static int MiscSequence(int index, Func<Dictionary<int, int>, int, int> rule)
     {

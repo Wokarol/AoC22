@@ -4,16 +4,17 @@ using System.Numerics;
 
 namespace AoC22;
 
+/// <summary>Class used for a point in a grid. Used for A* pathfinding.</summary>
 public class Node
 {
-    public Node? Connection { get; private set; }
-    public List<Node>? Neighbors { get; private set; }
-
     /// <summary>Coordinate of this Node</summary>
-    public Vector2Int Pos;
-
+    public Vector2Int Pos { get; private set; }
     /// <summary>Cost to go to this node</summary>
     public int Value { get; private set; }
+    /// <summary>Used for backtracking when pathfinding. Should be one of its neighbors.</summary>
+    public Node? Connection { get; private set; }
+    /// <summary>List of connecting nodes. Populate this before trying to pathfind.</summary>
+    public List<Node> Neighbors { get; private set; } = new();
     /// <summary>Cost from Start (all previous Values + this Value)</summary>
     public int G { get; private set; }
     /// <summary>Distance to target node. Aids in traveling more directly</summary>
@@ -21,7 +22,7 @@ public class Node
     /// <summary>Total Heuristic for traveling to this node</summary>
     public int F => G + H;
 
-    public Node(int x, int y, int value)
+    public Node(int x, int y, int value = 1)
     {
         Pos = new(x, y);
         Value = value;
@@ -29,17 +30,19 @@ public class Node
 
     public void SetG(int val) => G = val;
     public void SetH(int val) => H = val;
-    public int GetDistance(Node target) => Vector2Int.Distance(target.Pos, Pos);
     public void SetConnection(Node node) => Connection = node;
-    public void AssignNeighbors(IEnumerable<Node> allNodes)
-    {
-        Neighbors = new();
-        Neighbors.AddRange(allNodes.Where(n => Vector2Int.AreAdjacent(n.Pos, Pos)));
-    }
+    // alternative choices for GetDistance: (int)Math.Round(10 * Vector2Int.Distance(Pos, target.Pos)); or Vector2Int.DistanceManhattan(Pos, target.Pos);
+    public virtual int GetDistance(Node target) => Vector2Int.DistanceSquared(Pos, target.Pos);
+    protected virtual bool IsANeighbor(Node other) => Vector2Int.AreAdjacent(Pos, other.Pos); // optional: AreDiagonal
+    public void FindAndAddNeighbors(IEnumerable<Node> grid) => AddNeighbors(grid.Where(IsANeighbor));
+    public void AddNeighbors(IEnumerable<Node> allNeighbors) => Neighbors.AddRange(allNeighbors);
+    public void AddNeighbor(Node neighbor) => Neighbors.Add(neighbor);
+}
 
-    #region Pathfinding
-
-    public static List<Node> FindPath<T>(Node start, Node end)
+public static class Pathfinding 
+{ 
+    /// <summary>A* Pathfinding. Before calling this, ensure the Nodes' Neighbors have already been populated.</summary>
+    public static List<Node> FindPath(Node start, Node end)
     {
         var toSearch = new List<Node>() { start };
         var processed = new List<Node>();
@@ -48,31 +51,19 @@ public class Node
         {
             var current = toSearch[0];
             foreach (var next in toSearch)
-            {
-                if (next.F < current.F || (next.F == current.F && next.H < current.H))
-                {
+                if (next.IsBetterCandidateThan(current))
                     current = next;
-                }
-            }
 
-            processed.Add(current);
             toSearch.Remove(current);
+            processed.Add(current);
 
             if (current == end)
-            {
-                var path = new List<Node>();
-                var currentNode = end;
-                while (currentNode != start)
-                {
-                    path.Add(currentNode!);
-                    currentNode = currentNode!.Connection;
-                }
-                path.Add(start);
-                return path;
-            }
+                return BacktrackRoute(end, start);
 
-            foreach (var neighbor in current!.Neighbors!.Where(n => !processed.Contains(n)))
+            foreach (var neighbor in current.Neighbors)
             {
+                if (processed.Contains(neighbor)) continue;
+
                 var inSearch = toSearch.Contains(neighbor);
                 var costToNeighbor = current.G + neighbor.Value;
 
@@ -91,6 +82,21 @@ public class Node
         }
         return new List<Node>();
     }
-    
-    #endregion
+
+    /// <summary>Returns a value that indicates it's a cheaper cost to travel to next instead of the current leading node.</summary>
+    private static bool IsBetterCandidateThan(this Node next, Node current) => next.F < current.F || (next.F == current.F && next.H < current.H);
+
+    /// <summary>Returns a list of nodes in reverse order from the target destination to the starting point.</summary>
+    private static List<Node> BacktrackRoute(Node target, Node start)
+    {
+        var path = new List<Node>();
+        Node currentNode = target;
+        while (currentNode != start)
+        {
+            path.Add(currentNode);
+            currentNode = currentNode.Connection!;
+        }
+        path.Add(start);
+        return path;
+    }
 }

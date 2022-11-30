@@ -76,14 +76,18 @@ public struct Vector2Int : IEquatable<Vector2Int>, IFormattable
     public static bool ArePerpendicular(Vector2Int a, Vector2Int b) => a != Zero && b != Zero && a.X * b.X == -a.Y * b.Y;
     /// <summary>Restricts a vector between a minimum and a maximum value.</summary>
     public static Vector2Int Clamp(Vector2Int value, Vector2Int min, Vector2Int max) => new(Math.Clamp(value.X, min.X, max.X), Math.Clamp(value.Y, min.Y, max.Y));
+    /// <summary>Computes the Euclidian distance between the two given points.</summary>
+    public static double Distance(Vector2Int a, Vector2Int b) => Math.Sqrt(DistanceSquared(a, b));
+    /// <summary>Computes the Chebyshev distance, also known as chessboard distance - the amount of moves a king would take to get from a to b.</summary>
+    public static int DistanceChebyshev(Vector2Int a, Vector2Int b) => Math.Max(Math.Abs(b.X - a.X), Math.Abs(b.Y - a.Y));
+    /// <summary>Computes the Manhattan distance between the two given points.</summary>
+    public static int DistanceManhattan(Vector2Int a, Vector2Int b) => Math.Abs(b.X - a.X) + Math.Abs(b.Y - a.Y);
+    /// <summary>Returns the Euclidean distance squared between two specified points.</summary>
+    public static int DistanceSquared(Vector2Int a, Vector2Int b) => (b.X - a.X) * (b.X - a.X) + (b.Y - a.Y) * (b.Y - a.Y);
     /// <summary>Divides the first vector by the second.</summary>
     public static Vector2Int Divide(Vector2Int left, Vector2Int right) => left / right;
     /// <summary>Divides the specified vector by a specified scalar value.</summary>
     public static Vector2Int Divide(Vector2Int left, int divisor) => left / divisor;
-    /// <summary>Computes the Manhattan distance between the two given points.</summary>
-    public static int Distance(Vector2Int a, Vector2Int b) => Math.Abs(b.X - a.X) + Math.Abs(b.Y - a.Y);
-    /// <summary>Returns the Euclidean distance squared between two specified points.</summary>
-    public static int DistanceSquared(Vector2Int a, Vector2Int b) => (b.X - a.X) * (b.X - a.X) + (b.Y - a.Y) * (b.Y - a.Y);
     /// <summary>Returns the dot product of two vectors.</summary>
     public static int Dot(Vector2Int a, Vector2Int b) => a.X * b.X + a.Y * b.Y;
     /// <summary>Performs a linear interpolation between two vectors based on the given weighting (0f to 1f).</summary>

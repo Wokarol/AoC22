@@ -1,1 +1,5 @@
-﻿
+﻿Replace this file's data with the test case data. 
+Usually it's already blocked out in the puzzle's prompt for easy copy-pasting. 
+And the puzzle provides what the expected result should be - put that in results.txt
+And to avoid any false negatives, make sure there's no "extra line" at the end. 
+That's something that can be improved upon with further iteration.

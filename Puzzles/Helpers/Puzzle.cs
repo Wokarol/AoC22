@@ -23,17 +23,7 @@ public abstract class Puzzle : IDay
         _path = path;
     }
 
-    public virtual void Setup()
-    {
-    }
-
-    public virtual void SolvePart1()
-    {
-        _logger.Log("Solving Part 1 Not Implemented Yet.");
-    }
-
-    public virtual void SolvePart2()
-    {
-        _logger.Log("Solving Part 2 Not Implemented Yet.");
-    }
+    public abstract void Setup();
+    public abstract void SolvePart1();
+    public abstract void SolvePart2();
 }

@@ -15,16 +15,18 @@ public class Day1 : Puzzle
         foreach (var line in Utils.ReadFrom(_path))
         {
             Console.WriteLine(line);
+            // convert line of data to something maleable
         }
     }
 
     public override void SolvePart1()
     {
-        base.SolvePart1();
+        // TODO: magic
+        _logger.Log("Answer for part 1 here");
     }
 
     public override void SolvePart2()
     {
-        base.SolvePart2();
+        _logger.Log("Answer for part 2 here");
     }
 }

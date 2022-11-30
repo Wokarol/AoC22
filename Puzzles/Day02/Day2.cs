@@ -8,16 +8,16 @@ public class Day2 : Puzzle
 
     public override void Setup()
     {
-        base.Setup();
+
     }
 
     public override void SolvePart1()
     {
-        base.SolvePart1();
+        _logger.Log("Part 1 answer");
     }
 
     public override void SolvePart2()
     {
-        base.SolvePart2();
+        _logger.Log("Part 2 answer");
     }
 }

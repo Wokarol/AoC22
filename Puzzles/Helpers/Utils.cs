@@ -71,16 +71,43 @@ public static class Utils
         return false;
     }
 
-    public static TValue? GetValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, TValue? defVal)
-    {
-        return dict.TryGetValue(key, out TValue? value) ? value : defVal;
-    }
+    public static TValue? GetValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, TValue? defVal) => 
+        dict.TryGetValue(key, out TValue? value) ? value : defVal;
 
     // works better on a collection with an Odd amount of elements
-    public static T Median<T>(this IList<T> presortedCollection)
+    public static T Median<T>(this IEnumerable<T> presortedCollection)
     {
-        return presortedCollection[presortedCollection.Count / 2];
+        return presortedCollection.ElementAt(presortedCollection.Count() / 2);
     }
+
+    public static void Swap<T>(this IList<T> list, int index1, int index2)
+    {
+        if (index1 == index2) return;
+        (list[index2], list[index1]) = (list[index1], list[index2]);
+    }
+
+    public static void Swap<T>(this T[] array, int index1, int index2)
+    {
+        if (index1 == index2) return;
+        (array[index2], array[index1]) = (array[index1], array[index2]);
+    }
+
+    /// <summary>
+    /// Similar to Swap, but if the two indices aren't next to each other, everything in-between will shift over
+    /// </summary>
+    public static void SwapShift<T>(this IList<T> list, int from, int to)
+    {
+        if (from == to) return;
+        T temp = list[from];
+        list.RemoveAt(from);
+        list.Insert(to, temp);
+    }
+
+    public static T MaxBy<T>(this IEnumerable<T> source, Func<T, IComparable> score) =>
+        source.Aggregate((x, y) => score(x).CompareTo(score(y)) > 0 ? x : y);
+
+    public static T MinBy<T>(this IEnumerable<T> source, Func<T, IComparable> score) =>
+        source.Aggregate((x, y) => score(x).CompareTo(score(y)) < 0 ? x : y);
 
     #endregion
 
@@ -94,17 +121,40 @@ public static class Utils
     public static int BinaryToInt(string s) => Convert.ToInt32(s, 2);
     public static long BinaryToLong(string s) => Convert.ToInt64(s, 2);
 
+    public static string Hex2Binary(char hexChar) => hexChar switch
+    {
+        '0' => "0000",
+        '1' => "0001",
+        '2' => "0010",
+        '3' => "0011",
+        '4' => "0100",
+        '5' => "0101",
+        '6' => "0110",
+        '7' => "0111",
+        '8' => "1000",
+        '9' => "1001",
+        'A' or 'a' => "1010",
+        'B' or 'b' => "1011",
+        'C' or 'c' => "1100",
+        'D' or 'd' => "1101",
+        'E' or 'e' => "1110",
+        'F' or 'f' => "1111",
+        _ => throw new NotImplementedException()
+    };
 
     #endregion
 
     #region Misc
 
     private static readonly Dictionary<int, int> _triangleLookup = new();
-    /// <summary>Returns sum of 1 + 2 + ... + n-1 + n. Also known as Pascal's Triangle. 
-    /// Like Factorial but for addition instead. Same result as n(n+1)/2</summary>
-    /// <param name="n">n starts at 1. A 0 would just return 0</param>
+    /// <summary>
+    /// Returns sum of 1 + 2 + ... + n-1 + n. Also known as Pascal's Triangle. 
+    /// Like Factorial but for addition instead. Same result as n(n+1)/2.
+    /// If you have a sequence like 1, 3, 6, 10, 15, 21, 28, ...
+    /// </summary>
     public static int GetTriangleNumber(int n)
     {
+        if (n < 0) return 0; // unhandled cases
         if (!_triangleLookup.TryGetValue(n, out int result))
         {
             result = (n * (n + 1)) >> 1;
@@ -158,12 +208,12 @@ public static class Utils
 
     #endregion
 
-    #region Vector2 Extensions
+    #region Vector2Int Extensions
 
     /// <summary>Horizontally or Vertically aligned, but not the same position</summary>
-    public static bool IsLateralTo(this Vector2 a, Vector2 b) => a.X == b.X ^ a.Y == b.Y;
+    public static bool IsLateralTo(this Vector2Int a, Vector2Int b) => a.X == b.X ^ a.Y == b.Y;
 
-    public static void Reset(this ref Vector2 v) => v = Vector2.Zero;
+    public static void Reset(this ref Vector2Int v) => v = Vector2Int.Zero;
 
     public static IEnumerable<Vector2Int> GetRange(this Vector2Int from, Vector2Int to)
     {

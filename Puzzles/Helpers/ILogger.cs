@@ -6,6 +6,8 @@ public interface ILogger
 {
     public string? LastMessage { get; }
     public void Log(string msg);
+    public void Log(int msg) => Log(msg.ToString());
+    public void Log(long msg) => Log(msg.ToString());
 }
 
 public class ConsoleLogger : ILogger

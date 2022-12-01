@@ -2,7 +2,7 @@
 using AoC22;
 
 const int START_DAY = 1;
-const int STOP_DAY = 1;
+const int STOP_DAY = 25;
 
 var logger = new ConsoleLogger();
 

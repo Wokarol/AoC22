@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace AoC22;
 
 public class Day1 : Puzzle
 {
-    private List<int> _data = new();
+    // Example spot to store any parsed data
+    // private List<int> _data = new();
     
     public Day1(ILogger logger, string path) : base(logger, path) { }
 
@@ -13,14 +13,12 @@ public class Day1 : Puzzle
     {
         foreach (var line in Utils.ReadFrom(_path))
         {
-            Console.WriteLine(line);
-            // convert line of data to something maleable
+            // convert line of data to something usable
         }
     }
 
     public override void SolvePart1()
     {
-        // TODO: magic
         _logger.Log("Answer for part 1 here");
     }
 

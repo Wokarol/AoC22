@@ -26,3 +26,6 @@ for (int i = START_DAY; i <= STOP_DAY; i++)
 
     puzzle.SolvePart2();
 }
+#if !DEBUG
+Console.ReadLine(); // prevent closing automatically
+#endif

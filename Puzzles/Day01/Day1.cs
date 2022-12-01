@@ -1,31 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace AoC22;
 
 public class Day1 : Puzzle
 {
-    private List<int> _data = new();
+    private readonly List<int> _data = new();
     
     public Day1(ILogger logger, string path) : base(logger, path) { }
 
     public override void Setup()
     {
+        int current = 0;
         foreach (var line in Utils.ReadFrom(_path))
         {
-            Console.WriteLine(line);
-            // convert line of data to something maleable
+            if (string.IsNullOrEmpty(line))
+            {
+                if (current != 0) _data.Add(current);
+                current = 0;
+                continue;
+            }
+            current += int.Parse(line);
         }
+        if (current != 0) _data.Add(current); // final value in case input.txt doesn't end on a newline
     }
-
+    
     public override void SolvePart1()
     {
-        // TODO: magic
-        _logger.Log("Answer for part 1 here");
+        var result = _data.Max();
+        _logger.Log(result);
     }
 
     public override void SolvePart2()
     {
-        _logger.Log("Answer for part 2 here");
+        var result = _data.OrderByDescending(x => x).Take(3).Sum();
+        _logger.Log(result);
     }
 }

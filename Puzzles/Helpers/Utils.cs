@@ -232,6 +232,12 @@ public static class Utils
 
 }
 
+/// <summary>For referencing a value type as a reference type.</summary>
+public class Wrapper<T> where T : struct
+{ 
+    public T Value { get; set; } 
+}
+
 public sealed class Watch : IDisposable
 {
     private readonly string _text;

@@ -32,7 +32,7 @@ public struct Bounds
 
     /// <summary>
     /// Returns the center point. If the *number of points* on a side is even (even though Size will be odd),
-    /// it rounds down towards lower-left corner.
+    /// it rounds down towards lower-left corner.  e.g. If XMin = 1, and XMax = 4, it will return 2 for the XCenter
     /// </summary>
     public Vector2Int Center => Min + Extents;
     /// <summary>
@@ -72,7 +72,7 @@ public struct Bounds
         YMin -= yAmount;
         YMax += yAmount;
     }
-    /// <summary>Returns a value to indicate if another bounding box intersect with this bounding box.</summary>
+    /// <summary>Returns a value to indicate if another bounding box intersects or shares an edge with this bounding box.</summary>
     public bool Overlaps(Bounds other) => !(other.XMin > XMax || other.XMax < XMin || other.YMin > YMax || other.YMax < YMin);
     /// <summary>Sets the bounds to the min and max value of the box.</summary>
     public void SetMinMax(Vector2Int min, Vector2Int max)

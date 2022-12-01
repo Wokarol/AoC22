@@ -4,6 +4,9 @@ namespace AoCTests;
 
 public class Tests
 {
+    const int START_DAY = 1;
+    const int STOP_DAY = 25;
+
     private static readonly ILogger _logger = new TestLogger();
 
     [Test]
@@ -26,8 +29,8 @@ public class Tests
             var part1Result = _logger.LastMessage;
             
             // Assert
-            Assert.That(part1Result, Is.EqualTo(expectedResult1), "Part 1");
-            Assert.Inconclusive("Part 1 Passed. Part 2 expected result not yet provided.");
+            Assert.That(part1Result, Is.EqualTo(expectedResult1), "Part 1 (no Part 2 provided)");
+            //Assert.Inconclusive("Part 1 Passed. Part 2 expected result not yet provided.");
         }
 
         else if (expected.Length == 2)
@@ -58,7 +61,7 @@ public class Tests
     {
         Puzzle puzzle;
         string[] expected;
-        for (int i = 1; i <= 25; i++)
+        for (int i = START_DAY; i <= STOP_DAY; i++)
         {
             try
             {

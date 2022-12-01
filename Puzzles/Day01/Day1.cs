@@ -8,7 +8,6 @@ public class Day1 : Puzzle
     private List<int> _data = new();
     
     public Day1(ILogger logger, string path) : base(logger, path) { }
-    public Day1(string path) : base(path) { }
 
     public override void Setup()
     {

@@ -118,10 +118,12 @@ public static class Utils
         return Array.ConvertAll(data, s => int.Parse(s));
     }
 
-    public static int BinaryToInt(string s) => Convert.ToInt32(s, 2);
-    public static long BinaryToLong(string s) => Convert.ToInt64(s, 2);
-
-    public static string Hex2Binary(char hexChar) => hexChar switch
+    public static int BinaryToInt(this string s) => Convert.ToInt32(s, 2);
+    public static long BinaryToLong(this string s) => Convert.ToInt64(s, 2);
+    public static int HexToInt(this string s) => Convert.ToInt32(s, 16);
+    
+    // Not sure if Convert.ToString(hexChar, 2) is a valid alternative. Should probably test...
+    public static string HexToBinary(this char hexChar) => hexChar switch
     {
         '0' => "0000",
         '1' => "0001",
@@ -139,7 +141,7 @@ public static class Utils
         'D' or 'd' => "1101",
         'E' or 'e' => "1110",
         'F' or 'f' => "1111",
-        _ => throw new NotImplementedException()
+        _ => throw new NotImplementedException(),
     };
 
     #endregion

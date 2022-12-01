@@ -17,12 +17,6 @@ public abstract class Puzzle : IDay
         _path = path;
     }
 
-    public Puzzle(string path)
-    {
-        _logger = new ConsoleLogger();
-        _path = path;
-    }
-
     public abstract void Setup();
     public abstract void SolvePart1();
     public abstract void SolvePart2();

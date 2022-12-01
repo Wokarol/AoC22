@@ -2,8 +2,6 @@
 
 public class Day2 : Puzzle
 {
-    public Day2(string path) : base(path) { }
-
     public Day2(ILogger logger, string path) : base(logger, path) { }
 
     public override void Setup()

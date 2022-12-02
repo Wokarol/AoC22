@@ -179,35 +179,9 @@ public static class Utils
         return result;
     }
 
-    private static readonly Dictionary<int, int> _acceleratedSumLookup = new();
-    // f(5) = 1 + 3 + 6 + 10 + 15 = 35 = n(n+1)(n+2)/6 = sequence 1, 4, 10, 20, 35, 56
-    public static int GetAcceleratingSum(int index)
-    {
-        if (!_acceleratedSumLookup.TryGetValue(index, out int result))
-        {
-            result = index * (index + 1) * (index + 2) / 6;
-            _acceleratedSumLookup.Add(index, result);
-        }
-        return result;
-    }
+    // Note: To find mathematical formulas for specific sequences, go to https://oeis.org/
 
-    // TODO: Make a re-usable dictionary type designed for recursive lookups. Override the `this[]` accessor for safety
-
-    private static readonly Dictionary<int, int> _miscSequence = new();
-    /// <summary>
-    /// For sequences that build from previous values. A Fibonacci sequence could go like:
-    /// (dict, index) => index == 0 ? 0 : index == 1 ? 1 : dict[index - 1] + dict[index - 2];
-    /// But that could throw exceptions if that index doesn't exist in the dictionary yet
-    /// </summary>
-    public static int MiscSequence(int index, Func<Dictionary<int, int>, int, int> rule)
-    {
-        if (!_miscSequence.TryGetValue(index, out int result))
-        {
-            result = rule(_miscSequence, index);
-            _miscSequence.Add(index, result);
-        }
-        return result;
-    }
+    // TODO: Make a class for recursion, containing dictionary and methods that takes an index, Func and/or Predicate as args.
 
     #endregion
 

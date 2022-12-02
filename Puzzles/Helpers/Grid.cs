@@ -3,6 +3,8 @@ using System.Numerics;
 
 namespace AoC22;
 
+// work in progress. needs more functionality
+
 public class Grid<T>
 {
     // Not sure if this should be a Dictionary, List, multidimensional array [,], jagged array [][],...
@@ -19,5 +21,4 @@ public class Grid<T>
 
     public bool IsWithinBounds(Vector2Int pos) => IsWithinBounds(pos.X, pos.Y);
     public bool IsWithinBounds(int x, int y) => x >= 0 && x < _width && y >= 0 && y < _height;
-
 }

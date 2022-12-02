@@ -13,7 +13,7 @@ public struct Bounds
     public Bounds() : this(0, 0, 0, 0) { }
 
     public Bounds(Vector2Int point) : this(point.X, point.X, point.Y, point.Y) { }
-    
+
     public Bounds(int xMin, int xMax, int yMin, int yMax)
     {
         XMin = xMin;
@@ -21,7 +21,7 @@ public struct Bounds
         YMin = yMin;
         YMax = yMax;
     }
-    
+
     public Bounds(Vector2Int center, Vector2Int extents)
     {
         XMin = center.X - extents.X;
@@ -50,7 +50,7 @@ public struct Bounds
     public int Width => XMax - XMin;
     /// <summary>Difference between YMin and YMax. e.g. If YMin = 1, and YMax = 4, it will return 3 even though there are 4 points contained.</summary>
     public int Height => YMax - YMin;
-    
+
     /// <summary>Returns a point on the border of this Bounds that is closest to <paramref name="pos"/>.</summary>
     public Vector2Int ClosestPointOnBorder(Vector2Int pos) => ClosestPointOnBorder(pos.X, pos.Y);
     /// <summary>Returns a point on the border of this Bounds that is closest to (<paramref name="x"/>, <paramref name="y"/>).</summary>
@@ -73,7 +73,7 @@ public struct Bounds
     /// <summary>Returns a value that is the distance from the closest point on the Bounds' border.</summary>
     public int DistanceFromBorder(Vector2Int pos) => pos.DistanceManhattan(ClosestPointOnBorder(pos));
     /// <summary>Returns a value that is the distance from the closest point on the Bounds' border.</summary>
-    public int DistanceFromBorder(int x, int y) => new Vector2Int(x,y).DistanceManhattan(ClosestPointOnBorder(x, y));
+    public int DistanceFromBorder(int x, int y) => new Vector2Int(x, y).DistanceManhattan(ClosestPointOnBorder(x, y));
     /// <summary>Grows the Bounds to include the point.</summary>
     public void Encapsulate(Vector2Int point) => Encapsulate(point.X, point.Y);
     /// <summary>Grows the Bounds to include the point.</summary>
@@ -108,7 +108,7 @@ public struct Bounds
         YMin = min.Y;
         YMax = max.Y;
     }
-    
+
     //public bool HasOvershot(Vector2Int pos) => pos.X > XMax || pos.Y > YMax;
     //public bool HasUndershot(Vector2Int pos) => pos.X < XMin || pos.Y < YMin;
 }

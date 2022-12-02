@@ -7,7 +7,7 @@ public class Grid<T>
 {
     // Not sure if this should be a Dictionary, List, multidimensional array [,], jagged array [][],...
     public readonly Dictionary<Vector2Int, T> Data = new();
-    
+
     private readonly int _width; // columns. x-value
     private readonly int _height; // rows. y-value
 

@@ -1,9 +1,9 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
-using System.Numerics;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Numerics;
 
 namespace AoC22;
 
@@ -40,7 +40,7 @@ public static class Utils
 
     public static string[] ReadAllLines(string path) => FileExists(path) ? File.ReadAllLines(path) : Array.Empty<string>();
 
-    public static IEnumerable<string> ReadFrom(string path)
+    public static IEnumerable<string> ReadFrom(string path, bool ignoreWhiteSpace = false)
     {
         if (!FileExists(path)) yield break;
 
@@ -48,6 +48,7 @@ public static class Utils
         using var reader = File.OpenText(path);
         while ((line = reader.ReadLine()) != null)
         {
+            if (ignoreWhiteSpace && string.IsNullOrWhiteSpace(line)) continue;
             yield return line;
         }
     }
@@ -70,30 +71,31 @@ public static class Utils
         return false;
     }
 
-    public static TValue? GetValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, TValue? defVal) => 
+    /// <summary>
+    /// Tries to grab a value from a dictionary if it exists, otherwise returns the provided default value.
+    /// </summary>
+    public static TValue? GetValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, TValue? defVal) =>
         dict.TryGetValue(key, out TValue? value) ? value : defVal;
 
-    // works better on a collection with an Odd amount of elements
-    public static T Median<T>(this IEnumerable<T> presortedCollection)
-    {
-        return presortedCollection.ElementAt(presortedCollection.Count() / 2);
-    }
+    /// <summary>Returns the middle-most value, favoring the end for collections of even quantities.</summary>
+    public static T Middle<T>(this IList<T> list) => list.ElementAt(list.Count / 2);
+    /// <summary>Returns the middle-most value, favoring the end for collections of even quantities.</summary>
+    public static T Middle<T>(this T[] array) => array[array.Length / 2];
 
+    /// <summary>Swaps two elements in a collection.</summary>
     public static void Swap<T>(this IList<T> list, int index1, int index2)
     {
         if (index1 == index2) return;
         (list[index2], list[index1]) = (list[index1], list[index2]);
     }
-
+    /// <summary>Swaps two elements in a collection.</summary>
     public static void Swap<T>(this T[] array, int index1, int index2)
     {
         if (index1 == index2) return;
         (array[index2], array[index1]) = (array[index1], array[index2]);
     }
 
-    /// <summary>
-    /// Similar to Swap, but if the two indices aren't next to each other, everything in-between will shift over
-    /// </summary>
+    /// <summary>Similar to Swap, but if the two indices aren't next to each other, everything in-between will shift over.</summary>
     public static void SwapShift<T>(this IList<T> list, int from, int to)
     {
         if (from == to) return;
@@ -116,7 +118,7 @@ public static class Utils
     public static int BinaryToInt(this string s) => Convert.ToInt32(s, 2);
     public static long BinaryToLong(this string s) => Convert.ToInt64(s, 2);
     public static int HexToInt(this string s) => Convert.ToInt32(s, 16);
-    
+
     // Can also consider Convert.ToString(hexChar, 2), but won't guarantee length of 4
     public static string HexToBinary(this char hexChar) => hexChar switch
     {
@@ -138,44 +140,6 @@ public static class Utils
         'F' or 'f' => "1111",
         _ => throw new NotImplementedException(),
     };
-
-    #endregion
-
-    #region Misc
-
-    private static readonly Dictionary<int, int> _triangleLookup = new();
-    /// <summary>
-    /// Returns sum of 1 + 2 + ... + n-1 + n. Also known as Pascal's Triangle. 
-    /// Like Factorial but for addition instead. Same result as n(n+1)/2.
-    /// For sequences like 1, 3, 6, 10, 15, 21, 28, ...
-    /// </summary>
-    public static int GetTriangleNumber(int n)
-    {
-        if (n < 0) return 0; // unhandled cases
-        if (!_triangleLookup.TryGetValue(n, out int result))
-        {
-            result = (n * (n + 1)) >> 1;
-            _triangleLookup.Add(n, result);
-        }
-        return result;
-    }
-
-    private static readonly Dictionary<int, int> _fibonacciLookup = new() { { 0, 0 }, { 1, 1 } };
-    /// <summary>The famous Fibonacci sequence: 0, 1, 1, 2, 3, 5, 8, 13, 21, ...</summary>
-    public static int GetFibonacci(int n)
-    {
-        if (n < 0) return 0; // avoids stackoverflow exception
-        if (!_fibonacciLookup.TryGetValue(n, out int result))
-        {
-            result = GetFibonacci(n - 2) + GetFibonacci(n - 1);
-            _fibonacciLookup.Add(n, result);
-        }
-        return result;
-    }
-
-    // Note: To find mathematical formulas for specific sequences, go to https://oeis.org/
-
-    // TODO: Make a class for recursion, containing dictionary and methods that takes an index, Func and/or Predicate as args.
 
     #endregion
 
@@ -245,14 +209,52 @@ public static class Utils
 
     #endregion
 
+    #region Misc
+
+    private static readonly Dictionary<int, int> _triangleLookup = new();
+    /// <summary>
+    /// Returns sum of 1 + 2 + ... + n-1 + n. Also known as Pascal's Triangle. 
+    /// Like Factorial but for addition instead. Same result as n(n+1)/2.
+    /// For sequences like 1, 3, 6, 10, 15, 21, 28, ...
+    /// </summary>
+    public static int GetTriangleNumber(int n)
+    {
+        if (n < 0) return 0; // unhandled cases
+        if (!_triangleLookup.TryGetValue(n, out int result))
+        {
+            result = (n * (n + 1)) >> 1;
+            _triangleLookup.Add(n, result);
+        }
+        return result;
+    }
+
+    private static readonly Dictionary<int, int> _fibonacciLookup = new() { { 0, 0 }, { 1, 1 } };
+    /// <summary>The famous Fibonacci sequence: 0, 1, 1, 2, 3, 5, 8, 13, 21, ...</summary>
+    public static int GetFibonacci(int n)
+    {
+        if (n < 0) return 0; // avoids stackoverflow exception
+        if (!_fibonacciLookup.TryGetValue(n, out int result))
+        {
+            result = GetFibonacci(n - 2) + GetFibonacci(n - 1);
+            _fibonacciLookup.Add(n, result);
+        }
+        return result;
+    }
+
+    // Note: To find mathematical formulas for specific sequences, go to https://oeis.org/
+
+    // TODO: Make a class for recursion, containing dictionary and methods that takes an index, Func and/or Predicate as args.
+
+    #endregion
 }
 
 /// <summary>For referencing a value type as a reference type. Useful if you want to edit a value inside of a Stack/Queue.</summary>
 public class Wrapper<T> where T : struct
-{ 
-    public T Value { get; set; } 
+{
+    public T Value { get; set; }
 }
 
+/// <summary>For quick benchmarking. Can be used like: using (new <see cref="Watch"/>($"Day{i} runtime")) { ... }"</summary>
 public sealed class Watch : IDisposable
 {
     private readonly string _text;

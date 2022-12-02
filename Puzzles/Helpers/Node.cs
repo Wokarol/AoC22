@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 
@@ -31,16 +32,16 @@ public class Node
     public void SetG(int val) => G = val;
     public void SetH(int val) => H = val;
     public void SetConnection(Node node) => Connection = node;
-    // alternative choices for GetDistance: (int)Math.Round(10 * Vector2IntExtensions.Distance(Pos, target.Pos)); or Vector2IntExtensions.DistanceManhattan(Pos, target.Pos);
-    public virtual int GetDistance(Node target) => Pos.DistanceSquared(target.Pos);
+    // alternatives: Pos.DistanceSquared(target.Pos); or Pos.DistanceManhattan(target.Pos); or Pos.DistanceChebyshev(target.Pos);
+    public virtual int GetDistance(Node target) => (int)Math.Round(10 * Pos.Distance(target.Pos));
     protected virtual bool IsANeighbor(Node other) => Pos.IsAdjacentTo(other.Pos); // optional to add: || Pos.IsDiagonalTo(other.Pos);
     public void FindAndAddNeighbors(IEnumerable<Node> grid) => AddNeighbors(grid.Where(IsANeighbor));
     public void AddNeighbors(IEnumerable<Node> allNeighbors) => Neighbors.AddRange(allNeighbors);
     public void AddNeighbor(Node neighbor) => Neighbors.Add(neighbor);
 }
 
-public static class Pathfinding 
-{ 
+public static class Pathfinding
+{
     /// <summary>A* Pathfinding. Before calling this, ensure the Nodes' Neighbors have already been populated.</summary>
     public static List<Node> FindPath(Node start, Node end)
     {

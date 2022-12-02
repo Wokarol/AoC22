@@ -95,7 +95,7 @@ public struct Vector2Int : IEquatable<Vector2Int>, IFormattable
     #endregion
 
     #region Static Methods
-    
+
     /// <summary>Adds two vectors together.</summary>
     public static Vector2Int Add(Vector2Int left, Vector2Int right) => left + right;
     /// <summary>Divides the first vector by the second.</summary>

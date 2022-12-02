@@ -31,9 +31,9 @@ public class Node
     public void SetG(int val) => G = val;
     public void SetH(int val) => H = val;
     public void SetConnection(Node node) => Connection = node;
-    // alternative choices for GetDistance: (int)Math.Round(10 * Vector2Int.Distance(Pos, target.Pos)); or Vector2Int.DistanceManhattan(Pos, target.Pos);
-    public virtual int GetDistance(Node target) => Vector2Int.DistanceSquared(Pos, target.Pos);
-    protected virtual bool IsANeighbor(Node other) => Vector2Int.AreAdjacent(Pos, other.Pos); // optional: AreDiagonal
+    // alternative choices for GetDistance: (int)Math.Round(10 * Vector2IntExtensions.Distance(Pos, target.Pos)); or Vector2IntExtensions.DistanceManhattan(Pos, target.Pos);
+    public virtual int GetDistance(Node target) => Pos.DistanceSquared(target.Pos);
+    protected virtual bool IsANeighbor(Node other) => Pos.IsAdjacentTo(other.Pos); // optional to add: || Pos.IsDiagonalTo(other.Pos);
     public void FindAndAddNeighbors(IEnumerable<Node> grid) => AddNeighbors(grid.Where(IsANeighbor));
     public void AddNeighbors(IEnumerable<Node> allNeighbors) => Neighbors.AddRange(allNeighbors);
     public void AddNeighbor(Node neighbor) => Neighbors.Add(neighbor);

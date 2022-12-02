@@ -1,6 +1,8 @@
-using AoC22;
+using System;
+using System.Collections.Generic;
+using NUnit.Framework;
 
-namespace AoCTests;
+namespace AoC22.Tests;
 
 public class Tests
 {
@@ -18,7 +20,7 @@ public class Tests
         
         if (expected.Length == 0)
             Assert.Fail("results.txt has no values in it to compare against.");
-
+        
         else if (expected.Length == 1)
         {
             // Arrange
@@ -30,10 +32,10 @@ public class Tests
             
             // Assert
             Assert.That(part1Result, Is.EqualTo(expectedResult1), "Part 1 (no Part 2 provided)");
-            //Assert.Inconclusive("Part 1 Passed. Part 2 expected result not yet provided.");
+            Assert.Inconclusive("Part 1 Passed. Part 2 expected result not yet provided."); // optional, depending how you like to see test results
         }
-
-        else if (expected.Length == 2)
+        
+        else if (expected.Length == 2 || expected.Length == 3 && string.IsNullOrWhiteSpace(expected[2]))
         {
             // Arrange
             var expectedResult1 = expected[0];
@@ -54,7 +56,7 @@ public class Tests
         }
 
         else
-            Assert.Inconclusive($"Expected 1-2 lines in results.txt, found {expected.Length}. Did not know how to parse.");
+            Assert.Fail($"Expected 1-2 lines in results.txt, found {expected.Length}. Did not know how to parse.");
     }
 
     private static IEnumerable<TestCaseData> TestCaseGenerator()
@@ -65,13 +67,8 @@ public class Tests
         {
             try
             {
-                var inputPath = Utils.FullPath(i, forTests: true);
-                if (!Utils.FileExists(inputPath))
-                    continue;
-
-                var expectedPath = Utils.FullPath(i, forTests: true, fileName: "results.txt");
-                if (!Utils.FileExists(expectedPath))
-                    continue;
+                if (!TestUtils.TryGetTestPath(i, out var inputPath)) continue;
+                if (!TestUtils.TryGetTestPath(i, out var expectedPath, "results.txt")) continue;
 
                 puzzle = Utils.GetClassOfType<Puzzle>($"Day{i}", _logger, inputPath);
                 expected = Utils.ReadAllLines(expectedPath);

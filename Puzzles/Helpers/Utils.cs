@@ -32,10 +32,9 @@ public static class Utils
 
     public static bool FileExists(string path) => File.Exists(path);
 
-    public static string FullPath(int number, bool forTests = false, string fileName = "input.txt")
+    public static string FullPath(int number, string file = "input.txt")
     {
-        var folder = $"Day{number:D2}{(forTests ? "Test" : string.Empty)}";
-        var file = fileName;
+        var folder = $"Day{number:D2}";
         return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, folder, file);
     }
 
@@ -111,18 +110,14 @@ public static class Utils
 
     #endregion
 
-    #region Conversion Helpers
+    #region String Conversions
 
-    public static int[] ConvertToInts(this string[] data)
-    {
-        return Array.ConvertAll(data, s => int.Parse(s));
-    }
-
+    public static int[] ConvertToInts(this string[] data) => Array.ConvertAll(data, int.Parse);
     public static int BinaryToInt(this string s) => Convert.ToInt32(s, 2);
     public static long BinaryToLong(this string s) => Convert.ToInt64(s, 2);
     public static int HexToInt(this string s) => Convert.ToInt32(s, 16);
     
-    // Not sure if Convert.ToString(hexChar, 2) is a valid alternative. Should probably test...
+    // Can also consider Convert.ToString(hexChar, 2), but won't guarantee length of 4
     public static string HexToBinary(this char hexChar) => hexChar switch
     {
         '0' => "0000",
@@ -152,7 +147,7 @@ public static class Utils
     /// <summary>
     /// Returns sum of 1 + 2 + ... + n-1 + n. Also known as Pascal's Triangle. 
     /// Like Factorial but for addition instead. Same result as n(n+1)/2.
-    /// If you have a sequence like 1, 3, 6, 10, 15, 21, 28, ...
+    /// For sequences like 1, 3, 6, 10, 15, 21, 28, ...
     /// </summary>
     public static int GetTriangleNumber(int n)
     {
@@ -178,58 +173,84 @@ public static class Utils
         return result;
     }
 
-    private static readonly Dictionary<int, int> _acceleratedSumLookup = new();
-    // f(5) = 1 + 3 + 6 + 10 + 15 = 35 = n(n+1)(n+2)/6 = sequence 1, 4, 10, 20, 35, 56
-    public static int GetAcceleratingSum(int index)
-    {
-        if (!_acceleratedSumLookup.TryGetValue(index, out int result))
-        {
-            result = index * (index + 1) * (index + 2) / 6;
-            _acceleratedSumLookup.Add(index, result);
-        }
-        return result;
-    }
+    // Note: To find mathematical formulas for specific sequences, go to https://oeis.org/
 
-    // TODO: Make a re-usable dictionary type designed for recursive lookups. Override the `this[]` accessor for safety
+    // TODO: Make a class for recursion, containing dictionary and methods that takes an index, Func and/or Predicate as args.
 
-    private static readonly Dictionary<int, int> _miscSequence = new();
+    #endregion
+
+    #region Math Helpers
+
     /// <summary>
-    /// For sequences that build from previous values. A Fibonacci sequence could go like:
-    /// (dict, index) => index == 0 ? 0 : index == 1 ? 1 : dict[index - 1] + dict[index - 2];
-    /// But that could throw exceptions if that index doesn't exist in the dictionary yet
+    /// Returns a sorted list of all the factors of <paramref name="n"/>. 
+    /// Throws exception if <paramref name="n"/> is negative or 0.
     /// </summary>
-    public static int MiscSequence(int index, Func<Dictionary<int, int>, int, int> rule)
+    /// <exception cref="ArgumentOutOfRangeException"/>
+    public static List<int> Factor(int n)
     {
-        if (!_miscSequence.TryGetValue(index, out int result))
+        if (n < 1) throw new ArgumentOutOfRangeException($"n must be greater than 0. Value given: {n}");
+        List<int> factors = new() { 1 };
+        var upperLimit = (int)Math.Sqrt(n); // casting to int automatically floors
+        for (var i = upperLimit; i >= 2; i--)
         {
-            result = rule(_miscSequence, index);
-            _miscSequence.Add(index, result);
+            if (n % i == 0)
+            {
+                factors.Insert(1, i);
+                var pair = n / i;
+                if (i != pair) factors.Add(pair);
+            }
         }
-        return result;
+        if (n > 1) factors.Add(n);
+        return factors;
     }
 
-    #endregion
-
-    #region Vector2Int Extensions
-
-    /// <summary>Horizontally or Vertically aligned, but not the same position</summary>
-    public static bool IsLateralTo(this Vector2Int a, Vector2Int b) => a.X == b.X ^ a.Y == b.Y;
-
-    public static void Reset(this ref Vector2Int v) => v = Vector2Int.Zero;
-
-    public static IEnumerable<Vector2Int> GetRange(this Vector2Int from, Vector2Int to)
+    // Note: This "IsPrime" method is a "naive" implementation.
+    // For values greater than 2^14, see Miller-Rabin for a quicker approach: https://cade.site/diy-fast-isprime
+    /// <summary>Checks if <paramref name="n"/> is prime: greater than 1 with no positive divisors other than 1 and itself.</summary>
+    public static bool IsPrime(this int n) => IsPrime((long)n);
+    /// <summary>Checks if <paramref name="n"/> is prime: greater than 1 with no positive divisors other than 1 and itself.</summary>
+    public static bool IsPrime(this long n)
     {
-        do
-        {
-            yield return from;
-            from.X += from.X < to.X ? 1 : from.X > to.X ? -1 : 0;
-            from.Y += from.Y < to.Y ? 1 : from.Y > to.Y ? -1 : 0;
-        } while (from != to);
-        yield return to;
+        if (n <= 1) return false;
+        return n.FirstPrimeFactor() == n;
     }
+
+    /// <summary>
+    /// This will return the first prime number that <paramref name="n"/> is divisible by.
+    /// If <paramref name="n"/> is 1 or prime, it will return itself. Negative values throw exception.
+    /// </summary>
+    /// <exception cref="ArgumentOutOfRangeException"/>
+    public static int FirstPrimeFactor(this int n) => (int)FirstPrimeFactor((long)n);
+    /// <summary>
+    /// This will return the first prime number that <paramref name="n"/> is divisible by.
+    /// If <paramref name="n"/> is 1 or prime, it will return itself. Negative values throw exception.
+    /// </summary>
+    /// <exception cref="ArgumentOutOfRangeException"/>
+    public static long FirstPrimeFactor(this long n)
+    {
+        if (n < 0) throw new ArgumentOutOfRangeException($"n must be a positive integer. Value given: {n}");
+        if ((n & 1) == 0) return 2;
+
+        for (int d = 3; d * d <= n; d += 2)
+            if (n % d == 0) return d;
+
+        return n;
+    }
+
+    /// <summary>Returns the greatest common divisor of the two arguments.</summary>
+    public static int GreatestCommonDivisor(int a, int b) => b > 0 ? GreatestCommonDivisor(b, a % b) : Math.Abs(a);
+
+    /// <summary>Returns the least common multiple of the two arguments.</summary>
+    public static int LeastCommonMultiple(int a, int b) => (a * b) / GreatestCommonDivisor(a, b);
 
     #endregion
 
+}
+
+/// <summary>For referencing a value type as a reference type. Useful if you want to edit a value inside of a Stack/Queue.</summary>
+public class Wrapper<T> where T : struct
+{ 
+    public T Value { get; set; } 
 }
 
 public sealed class Watch : IDisposable

@@ -43,6 +43,8 @@ public struct Vector2Int : IEquatable<Vector2Int>, IFormattable
         }
     }
 
+    #region Static Properties
+
     /// <summary>Gets the vector (1,0).</summary>
     public static Vector2Int Right => new(1, 0);
     /// <summary>Gets the vector (0,1).</summary>
@@ -57,11 +59,21 @@ public struct Vector2Int : IEquatable<Vector2Int>, IFormattable
     public static Vector2Int Zero => new(0, 0);
     // Consider: N,E,S,W, SouthEast, SouthWest, NorthWest, and replace One with NorthEast
 
+    #endregion
+
+    #region Non-Static Methods
+
     /// <summary>Returns the length of the vector.</summary>
-    public readonly int Length() => Math.Abs(X) + Math.Abs(Y);
+    public readonly double Length() => Math.Sqrt(LengthSquared());
     /// <summary>Returns the length of the vector squared.</summary>
-    public readonly int LengthSquared() => Length() * Length();
-    
+    public readonly int LengthSquared() => X * X + Y * Y;
+    /// <summary>Resets the vector to the origin (0, 0).</summary>
+    public void Reset() { X = 0; Y = 0; }
+
+    #endregion
+
+    #region Static Methods
+
     /// <summary>Returns a vector whose elements are the absolute values of each of the specified vector's elements.</summary>
     public static Vector2Int Abs(Vector2Int value) => new(Math.Abs(value.X), Math.Abs(value.Y));
     /// <summary>Adds two vectors together.</summary>
@@ -70,6 +82,8 @@ public struct Vector2Int : IEquatable<Vector2Int>, IFormattable
     public static bool AreAdjacent(Vector2Int a, Vector2Int b) => (a.X == b.X && Math.Abs(a.Y - b.Y) == 1) || (a.Y == b.Y && Math.Abs(a.X - b.X) == 1);
     /// <summary>Returns a value that indicates if two vectors are next to each other diagonally.</summary>
     public static bool AreDiagonal(Vector2Int a, Vector2Int b) => Math.Abs(a.X - b.X) == 1 && Math.Abs(a.Y - b.Y) == 1;
+    /// <summary>Horizontally or Vertically aligned at any distance, but not the same position</summary>
+    public static bool AreLateral(Vector2Int a, Vector2Int b) => a.X == b.X ^ a.Y == b.Y;
     /// <summary>Returns a value that indicates if two vectors are parralel and neither is Vector2Int.Zero</summary>
     public static bool AreParallel(Vector2Int a, Vector2Int b) => a != Zero && b != Zero && a.X * b.Y == a.Y * b.X;
     /// <summary>Returns a value that indicates if two vectors are perpendicular and neither is Vector2Int.Zero</summary>
@@ -80,7 +94,7 @@ public struct Vector2Int : IEquatable<Vector2Int>, IFormattable
     public static double Distance(Vector2Int a, Vector2Int b) => Math.Sqrt(DistanceSquared(a, b));
     /// <summary>Computes the Chebyshev distance, also known as chessboard distance - the amount of moves a king would take to get from a to b.</summary>
     public static int DistanceChebyshev(Vector2Int a, Vector2Int b) => Math.Max(Math.Abs(b.X - a.X), Math.Abs(b.Y - a.Y));
-    /// <summary>Computes the Manhattan distance between the two given points.</summary>
+    /// <summary>Computes the Manhattan distance between the two given points. No diagonal moves.</summary>
     public static int DistanceManhattan(Vector2Int a, Vector2Int b) => Math.Abs(b.X - a.X) + Math.Abs(b.Y - a.Y);
     /// <summary>Returns the Euclidean distance squared between two specified points.</summary>
     public static int DistanceSquared(Vector2Int a, Vector2Int b) => (b.X - a.X) * (b.X - a.X) + (b.Y - a.Y) * (b.Y - a.Y);
@@ -117,6 +131,10 @@ public struct Vector2Int : IEquatable<Vector2Int>, IFormattable
     /// <summary>Subtracts the second vector from the first.</summary>
     public static Vector2Int Subtract(Vector2Int left, Vector2Int right) => left - right;
 
+    #endregion
+
+    #region Interface and Overrides
+
     /// <summary>Returns a value that indicates whether this instance and another vector are equal.</summary>
     public readonly bool Equals(Vector2Int other) => this == other;
     /// <summary>Returns a value that indicates whether this instance and another vector are equal.</summary>
@@ -134,6 +152,10 @@ public struct Vector2Int : IEquatable<Vector2Int>, IFormattable
     /// <summary>Returns the string representation of the current instance using the specified format string to format individual elements.</summary>
     public readonly string ToString([StringSyntax("NumericFormat")] string? format) => $"{X.ToString(format)},{Y.ToString(format)}";
 
+    #endregion
+
+    #region Operators
+
     /// <summary>Adds two vectors together.</summary>
     public static Vector2Int operator +(Vector2Int left, Vector2Int right) => new(left.X + right.X, left.Y + right.Y);
     /// <summary>Negates the specified vector.</summary>
@@ -146,7 +168,7 @@ public struct Vector2Int : IEquatable<Vector2Int>, IFormattable
     public static Vector2Int operator *(int left, Vector2Int right) => new(left * right.X, left * right.Y);
     /// <summary>Multiples the scalar value by the specified vector.</summary>
     public static Vector2Int operator *(Vector2Int left, int right) => new(left.X * right, left.Y * right);
-    /// <summary>Divides the first vector by the second using integer division.</summary>
+    /// <summary>Divides the first vector by the second pair-wise using integer division.</summary>
     public static Vector2Int operator /(Vector2Int left, Vector2Int right) => new(left.X / right.X, left.Y / right.Y);
     /// <summary>Divides the specified vector by a specified scalar value using integer division.</summary>
     public static Vector2Int operator /(Vector2Int value, int divisor) => new(value.X / divisor, value.Y / divisor);
@@ -154,4 +176,6 @@ public struct Vector2Int : IEquatable<Vector2Int>, IFormattable
     public static bool operator ==(Vector2Int left, Vector2Int right) => left.X == right.X && left.Y == right.Y;
     ///<summary>Returns a value that indicates whether two specified vectors are not equal.</summary>     
     public static bool operator !=(Vector2Int left, Vector2Int right) => left.X != right.X || left.Y != right.Y;
+
+    #endregion
 }

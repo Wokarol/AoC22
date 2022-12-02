@@ -1,8 +1,8 @@
 ﻿using System;
 using AoC22;
 
-const int START_DAY = 1;
-const int STOP_DAY = 1;
+const int START_DAY = 2;
+const int STOP_DAY = 25;
 
 var logger = new ConsoleLogger();
 
@@ -14,9 +14,9 @@ for (int i = START_DAY; i <= STOP_DAY; i++)
 		puzzle = Utils.GetClassOfType<Puzzle>($"Day{i}", logger, Utils.FullPath(i));
 		logger.Log($"Day {i}:");
 	}
-	catch (Exception e)
+	catch (Exception)// e)
 	{
-		logger.Log(e.Message);
+		//logger.Log(e.Message);
 		continue;
 	}
 
@@ -26,6 +26,7 @@ for (int i = START_DAY; i <= STOP_DAY; i++)
 
     puzzle.SolvePart2();
 }
+
 #if !DEBUG
-Console.ReadLine(); // prevent closing automatically
+Console.ReadLine(); // prevent closing a build automatically
 #endif

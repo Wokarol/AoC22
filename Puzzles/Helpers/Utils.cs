@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Diagnostics;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace AoC22;
 
@@ -211,13 +212,9 @@ public static class Utils
     #endregion
 
     #region Vector2Int Extensions
-
-    /// <summary>Horizontally or Vertically aligned, but not the same position</summary>
-    public static bool IsLateralTo(this Vector2Int a, Vector2Int b) => a.X == b.X ^ a.Y == b.Y;
-
-    public static void Reset(this ref Vector2Int v) => v = Vector2Int.Zero;
-
-    public static IEnumerable<Vector2Int> GetRange(this Vector2Int from, Vector2Int to)
+    
+    /// <summary>Assuming no obstacles or difference in cost between the points, this returns a predictable path.</summary>
+    public static IEnumerable<Vector2Int> GetChebyshevPath(this Vector2Int from, Vector2Int to)
     {
         do
         {
@@ -227,6 +224,72 @@ public static class Utils
         } while (from != to);
         yield return to;
     }
+
+    #endregion
+
+    #region Math Helpers
+
+    /// <summary>
+    /// Returns a sorted list of all the factors of <paramref name="n"/>. 
+    /// Throws exception if <paramref name="n"/> is negative or 0.
+    /// </summary>
+    /// <exception cref="ArgumentOutOfRangeException"/>
+    public static List<int> Factor(int n)
+    {
+        if (n < 1) throw new ArgumentOutOfRangeException($"n must be greater than 0. Value given: {n}");
+        List<int> factors = new() { 1 };
+        var upperLimit = (int)Math.Sqrt(n); // casting to int automatically floors
+        for (var i = upperLimit; i >= 2; i--)
+        {
+            if (n % i == 0)
+            {
+                factors.Insert(1, i);
+                var pair = n / i;
+                if (i != pair) factors.Add(pair);
+            }
+        }
+        if (n > 1) factors.Add(n);
+        return factors;
+    }
+
+    // Note: This "IsPrime" method is a "naive" implementation.
+    // For values greater than 2^14, see Miller-Rabin for a quicker approach: https://cade.site/diy-fast-isprime
+    /// <summary>Checks if <paramref name="n"/> is prime: greater than 1 with no positive divisors other than 1 and itself.</summary>
+    public static bool IsPrime(this int n) => IsPrime((long)n);
+    /// <summary>Checks if <paramref name="n"/> is prime: greater than 1 with no positive divisors other than 1 and itself.</summary>
+    public static bool IsPrime(this long n)
+    {
+        if (n <= 1) return false;
+        return n.FirstPrimeFactor() == n;
+    }
+
+    /// <summary>
+    /// This will return the first prime number that <paramref name="n"/> is divisible by.
+    /// If <paramref name="n"/> is 1 or prime, it will return itself. Negative values throw exception.
+    /// </summary>
+    /// <exception cref="ArgumentOutOfRangeException"/>
+    public static int FirstPrimeFactor(this int n) => (int)FirstPrimeFactor((long)n);
+    /// <summary>
+    /// This will return the first prime number that <paramref name="n"/> is divisible by.
+    /// If <paramref name="n"/> is 1 or prime, it will return itself. Negative values throw exception.
+    /// </summary>
+    /// <exception cref="ArgumentOutOfRangeException"/>
+    public static long FirstPrimeFactor(this long n)
+    {
+        if (n < 0) throw new ArgumentOutOfRangeException($"n must be a positive integer. Value given: {n}");
+        if ((n & 1) == 0) return 2;
+
+        for (int d = 3; d * d <= n; d += 2)
+            if (n % d == 0) return d;
+
+        return n;
+    }
+
+    /// <summary>Returns the greatest common divisor of the two arguments.</summary>
+    public static int GreatestCommonDivisor(int a, int b) => b > 0 ? GreatestCommonDivisor(b, a % b) : Math.Abs(a);
+
+    /// <summary>Returns the least common multiple of the two arguments.</summary>
+    public static int LeastCommonMultiple(int a, int b) => (a * b) / GreatestCommonDivisor(a, b);
 
     #endregion
 

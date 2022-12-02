@@ -50,17 +50,39 @@ public struct Bounds
     public int Width => XMax - XMin;
     /// <summary>Difference between YMin and YMax. e.g. If YMin = 1, and YMax = 4, it will return 3 even though there are 4 points contained.</summary>
     public int Height => YMax - YMin;
+    
+    /// <summary>Returns a point on the border of this Bounds that is closest to <paramref name="pos"/>.</summary>
+    public Vector2Int ClosestPointOnBorder(Vector2Int pos) => ClosestPointOnBorder(pos.X, pos.Y);
+    /// <summary>Returns a point on the border of this Bounds that is closest to (<paramref name="x"/>, <paramref name="y"/>).</summary>
+    public Vector2Int ClosestPointOnBorder(int x, int y)
+    {
+        x = Math.Clamp(x, XMin, XMax);
+        y = Math.Clamp(y, YMin, YMax);
+
+        var dxLeft = x - XMin; var dxRight = XMax - x;
+        var dyBot = y - YMin; var dyTop = YMax - y;
+
+        return Math.Min(dxLeft, dxRight) < Math.Min(dyBot, dyTop) ?
+            new(dxLeft < dxRight ? XMin : XMax, y) :
+            new(x, dyBot < dyTop ? YMin : YMax);
+    }
     /// <summary>Returns a value to indicate if a point is within the bounding box.</summary>
     public bool Contains(Vector2Int pos) => Contains(pos.X, pos.Y);
     /// <summary>Returns a value to indicate if a point is within the bounding box.</summary>
     public bool Contains(int x, int y) => IsInHorizontalBounds(x) && IsInVerticalBounds(y);
+    /// <summary>Returns a value that is the distance from the closest point on the Bounds' border.</summary>
+    public int DistanceFromBorder(Vector2Int pos) => Vector2Int.DistanceManhattan(ClosestPointOnBorder(pos), pos);
+    /// <summary>Returns a value that is the distance from the closest point on the Bounds' border.</summary>
+    public int DistanceFromBorder(int x, int y) => Vector2Int.DistanceManhattan(ClosestPointOnBorder(x, y), new Vector2Int(x, y));
     /// <summary>Grows the Bounds to include the point.</summary>
-    public void Encapsulate(Vector2Int point)
+    public void Encapsulate(Vector2Int point) => Encapsulate(point.X, point.Y);
+    /// <summary>Grows the Bounds to include the point.</summary>
+    public void Encapsulate(int x, int y)
     {
-        XMin = Math.Min(XMin, point.X);
-        XMax = Math.Max(XMax, point.X);
-        YMin = Math.Min(YMin, point.Y);
-        YMax = Math.Max(YMax, point.Y);
+        XMin = Math.Min(XMin, x);
+        XMax = Math.Max(XMax, x);
+        YMin = Math.Min(YMin, y);
+        YMax = Math.Max(YMax, y);
     }
     /// <summary>Expand the bounds by increasing its size by amount along each side.</summary>
     public void Expand(int amount) => Expand(amount, amount);
@@ -72,6 +94,10 @@ public struct Bounds
         YMin -= yAmount;
         YMax += yAmount;
     }
+    /// <summary>Returns true if <paramref name="x"/> is on or inside the Bounds.</summary>
+    public bool IsInHorizontalBounds(int x) => x >= XMin && x <= XMax;
+    /// <summary>Returns true if <paramref name="y"/> is on or inside the Bounds.</summary>
+    public bool IsInVerticalBounds(int y) => y >= YMin && y <= YMax;
     /// <summary>Returns a value to indicate if another bounding box intersects or shares an edge with this bounding box.</summary>
     public bool Overlaps(Bounds other) => !(other.XMin > XMax || other.XMax < XMin || other.YMin > YMax || other.YMax < YMin);
     /// <summary>Sets the bounds to the min and max value of the box.</summary>
@@ -82,9 +108,7 @@ public struct Bounds
         YMin = min.Y;
         YMax = max.Y;
     }
-
-    public bool IsInHorizontalBounds(int x) => x >= XMin && x <= XMax;
-    public bool IsInVerticalBounds(int y) => y >= YMin && y <= YMax;
+    
     //public bool HasOvershot(Vector2Int pos) => pos.X > XMax || pos.Y > YMax;
     //public bool HasUndershot(Vector2Int pos) => pos.X < XMin || pos.Y < YMin;
 }

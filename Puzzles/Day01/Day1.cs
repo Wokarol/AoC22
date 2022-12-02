@@ -22,7 +22,7 @@ public class Day1 : Puzzle
             }
             current += int.Parse(line);
         }
-        if (current != 0) _data.Add(current); // final value in case input.txt doesn't end on a newline
+        if (current != 0) _data.Add(current); // in case input.txt doesn't end on a newline
     }
     
     public override void SolvePart1()
@@ -33,7 +33,7 @@ public class Day1 : Puzzle
 
     public override void SolvePart2()
     {
-        var result = _data.OrderByDescending(x => x).Take(3).Sum();
+        var result = _data.OrderDescending().Take(3).Sum();
         _logger.Log(result);
     }
 }

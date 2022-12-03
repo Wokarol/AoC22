@@ -207,6 +207,16 @@ public static class Utils
     /// <summary>Returns the least common multiple of the two arguments.</summary>
     public static int LeastCommonMultiple(int a, int b) => (a * b) / GreatestCommonDivisor(a, b);
 
+    /// <summary>
+    /// Computes `n mod m`. This is different than the `%` operator in the case of
+    /// negative numbers, e.g. `-8 % 7 = -1`, but `-8.Mod(7) = 6`.
+    /// </summary>
+    public static int Mod(this int n, int mod)
+    {
+        var remainder = n % mod;
+        return remainder + (remainder < 0 ? mod : 0);
+    }
+
     #endregion
 
     #region Misc

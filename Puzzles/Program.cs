@@ -12,7 +12,7 @@ for (int i = START_DAY; i <= STOP_DAY; i++)
     try
     {
         puzzle = Utils.GetClassOfType<Puzzle>($"Day{i}", logger, Utils.FullPath(i));
-        logger.Log($"Day {i}:");
+        logger.Log($" -- Day {i} --");
     }
     catch (Exception)// e)
     {

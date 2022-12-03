@@ -17,9 +17,8 @@ public class Day3 : Puzzle
         int score = 0;
         foreach (var line in _data)
         {
-            var compartment1 = line[..(line.Length / 2)];
-            var compartment2 = line[(line.Length / 2)..];
-            var charInCommon = CharsInCommon(compartment1, compartment2).FirstOrDefault();
+            var half = line.Length >> 1;
+            var charInCommon = CharsInCommon(line[..half], line[half..]).FirstOrDefault();
             score += ScoreForChar(charInCommon);
         }
         _logger.Log(score);

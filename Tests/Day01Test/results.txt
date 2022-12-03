@@ -1,3 +1,2 @@
-﻿Make sure this expected test results file only has 1 
-or 2 lines.
-// you can have an empty line here, but any more lines will fail (may need to adjust for multi-line string results)
+﻿70116
+206582

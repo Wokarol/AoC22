@@ -18,31 +18,48 @@ public class Day6 : Puzzle
 
     public override void SolvePart1()
     {
-        int marker = 0;
-        const int markerLength = 4;
-        for (int i = markerLength; i <= datastream.Length; i++)
-        {
-            if (datastream[(i - markerLength)..i].Distinct().Count() == markerLength)
-            {
-                marker = i;
-                break;
-            }
-        }
-        _logger.Log(marker);
+        _logger.Log(GetMarker(4));
     }
+
 
     public override void SolvePart2()
     {
-        int marker = 0;
-        const int markerLength = 14;
-        for (int i = markerLength; i <= datastream.Length; i++)
+        _logger.Log(GetMarker(14));
+    }
+
+    private int GetMarker(int markerLength)
+    {
+        Span<int> mask = stackalloc int['z' - 'a' + 1];
+        for (int i = 0; i < markerLength; i++)
         {
-            if (datastream[(i - markerLength)..i].Distinct().Count() == markerLength)
+            mask[datastream[i] - 'a']++;
+        }
+
+        if (IsMaskWinning(mask))
+            return markerLength;
+
+        for (int i = markerLength; i < datastream.Length; i++)
+        {
+            mask[datastream[i - markerLength] - 'a']--;
+            mask[datastream[i] - 'a']++;
+
+            if (IsMaskWinning(mask))
+                return i + 1;
+        }
+
+        return 0;
+    }
+
+    private bool IsMaskWinning(Span<int> mask)
+    {
+        for (int j = 0; j < mask.Length; j++)
+        {
+            if (mask[j] >= 2)
             {
-                marker = i;
-                break;
+                return false;
             }
         }
-        _logger.Log(marker);
+
+        return true;
     }
 }

@@ -5,6 +5,12 @@ using System.Text.RegularExpressions;
 
 namespace AoC22;
 
+public partial class Kevin
+{
+    [GeneratedRegex("\\$ cd ([/.\\w]+)")]
+    private static partial Regex ChangeDirectoryPattern();
+}
+
 public class Day7 : Puzzle
 {
     private Directory root = new();

@@ -102,7 +102,7 @@ public class Day8 : Puzzle
 
     private int WalkAndCount(int x, int y, int dx, int dy)
     {
-        int highestTree = grid[x, y];
+        int originalTree = grid[x, y];
         int sum = 0;
 
         x += dx;
@@ -115,11 +115,11 @@ public class Day8 : Puzzle
         {
             int currentTree = grid[x, y];
 
-            if (currentTree < highestTree)
+            if (currentTree < originalTree)
             {
                 sum += 1;
             }
-            if (currentTree >= highestTree)
+            if (currentTree >= originalTree)
             {
                 return sum + 1;
             }
@@ -129,9 +129,6 @@ public class Day8 : Puzzle
 
             if (x < 0 || x >= grid.GetLength(0)) return sum;
             if (y < 0 || y >= grid.GetLength(1)) return sum;
-
-            if (currentTree > highestTree)
-                highestTree = currentTree;
         }
     }
 

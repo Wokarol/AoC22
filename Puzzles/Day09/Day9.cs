@@ -40,14 +40,7 @@ public partial class Day9 : Puzzle
         {
             for (int i = 0; i < command.Count; i++)
             {
-                (int x, int y) headDelta = command.Dir switch
-                {
-                    Direction.Up => (0, 1),
-                    Direction.Down => (0, -1),
-                    Direction.Right => (1, 0),
-                    Direction.Left => (-1, 0),
-                    _ => throw new Exception()
-                };
+                (int x, int y) headDelta = DeltaFromDirection(command.Dir);
                 head = (head.x + headDelta.x, head.y + headDelta.y);
 
                 tail = MoveTail(tail, head);
@@ -67,14 +60,7 @@ public partial class Day9 : Puzzle
         {
             for (int i = 0; i < command.Count; i++)
             {
-                (int x, int y) headDelta = command.Dir switch
-                {
-                    Direction.Up => (0, 1),
-                    Direction.Down => (0, -1),
-                    Direction.Right => (1, 0),
-                    Direction.Left => (-1, 0),
-                    _ => throw new Exception()
-                };
+                (int x, int y) headDelta = DeltaFromDirection(command.Dir);
                 segments[0] = (segments[0].x + headDelta.x, segments[0].y + headDelta.y);
 
                 for (int s = 1; s < segments.Length; s++)
@@ -105,45 +91,23 @@ public partial class Day9 : Puzzle
 
     private enum Direction { Left, Right, Up, Down }
 
+    private (int x, int y) DeltaFromDirection(Direction d) => d switch
+    {
+        Direction.Up => (0, 1),
+        Direction.Down => (0, -1),
+        Direction.Right => (1, 0),
+        Direction.Left => (-1, 0),
+        _ => throw new Exception()
+    };
+
     private (int x, int y) MoveTail((int x, int y) tail, (int x, int y) head)
     {
         (int x, int y) tailDelta = (0, 0);
-        if (Math.Abs(tail.x - head.x) <= 1 && Math.Abs(tail.y - head.y) <= 1)
+        if (Math.Abs(tail.x - head.x) > 1 || Math.Abs(tail.y - head.y) > 1)
         {
-
-        }
-        else
-        {
-            if (tail.y == head.y)
-            {
-                // Tail is in line with the head (left/right)
-                int delta = head.x - tail.x;
-                if (Math.Abs(delta) >= 2)
-                {
-                    int dir = Math.Sign(delta);
-                    tailDelta = (dir, 0);
-                }
-            }
-            else if (tail.x == head.x)
-            {
-                // Tail is in line with the head (up/down)
-                int delta = head.y - tail.y;
-                if (Math.Abs(delta) >= 2)
-                {
-                    int dir = Math.Sign(delta);
-                    tailDelta = (0, dir);
-                }
-            }
-            else
-            {
-                tailDelta = (tail.x < head.x, tail.y < head.y) switch
-                {
-                    (true, true) => (1, 1),
-                    (true, false) => (1, -1),
-                    (false, false) => (-1, -1),
-                    (false, true) => (-1, 1),
-                };
-            }
+            int deltaX = head.x - tail.x;
+            int deltaY = head.y - tail.y;
+            tailDelta = (Math.Sign(deltaX), Math.Sign(deltaY));
         }
 
         return (tail.x + tailDelta.x, tail.y + tailDelta.y);

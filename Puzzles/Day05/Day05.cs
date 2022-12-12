@@ -5,13 +5,13 @@ using System.Text.RegularExpressions;
 
 namespace AoC22;
 
-public class Day5 : Puzzle
+public class Day05 : Puzzle
 {
     Stack<char>[] stacks;
     List<Move> moves = new();
 
 
-    public Day5(ILogger logger, string path) : base(logger, path) { }
+    public Day05(ILogger logger, string path) : base(logger, path) { }
 
     public override void Setup()
     {

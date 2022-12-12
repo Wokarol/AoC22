@@ -3,14 +3,14 @@ using System.Linq;
 
 namespace AoC22;
 
-public class Day1 : Puzzle
+public class Day01 : Puzzle
 {
     // Example spot to store any parsed data
     // private List<int> _data = new();
 
     private List<int> elves = new();
 
-    public Day1(ILogger logger, string path) : base(logger, path) { }
+    public Day01(ILogger logger, string path) : base(logger, path) { }
 
     public override void Setup()
     {

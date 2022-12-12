@@ -39,6 +39,7 @@ public static class Utils
     }
 
     public static string[] ReadAllLines(string path) => FileExists(path) ? File.ReadAllLines(path) : Array.Empty<string>();
+    public static string ReadAllText(string path) => FileExists(path) ? File.ReadAllText(path) : "";
 
     public static IEnumerable<string> ReadFrom(string path)
     {

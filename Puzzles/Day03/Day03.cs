@@ -4,11 +4,11 @@ using System.Linq;
 
 namespace AoC22;
 
-public class Day3 : Puzzle
+public class Day03 : Puzzle
 {
     private List<Sack> sacks = new();
 
-    public Day3(ILogger logger, string path) : base(logger, path) { }
+    public Day03(ILogger logger, string path) : base(logger, path) { }
 
     public override void Setup()
     {

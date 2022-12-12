@@ -5,11 +5,11 @@ using System.Text.RegularExpressions;
 
 namespace AoC22;
 
-public partial class Day9 : Puzzle
+public partial class Day09 : Puzzle
 {
     private List<Command> commands = new();
 
-    public Day9(ILogger logger, string path) : base(logger, path) { }
+    public Day09(ILogger logger, string path) : base(logger, path) { }
 
     public override void Setup()
     {

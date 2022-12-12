@@ -11,11 +11,11 @@ public partial class Kevin
     private static partial Regex ChangeDirectoryPattern();
 }
 
-public class Day7 : Puzzle
+public class Day07 : Puzzle
 {
     private Directory root = new();
 
-    public Day7(ILogger logger, string path) : base(logger, path) { }
+    public Day07(ILogger logger, string path) : base(logger, path) { }
 
     public override void Setup()
     {

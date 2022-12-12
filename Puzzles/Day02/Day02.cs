@@ -3,12 +3,12 @@ using System.Collections.Generic;
 
 namespace AoC22;
 
-public class Day2 : Puzzle
+public class Day02 : Puzzle
 {
     private List<Turn> turns1 = new();
     private List<Turn> turns2 = new();
 
-    public Day2(ILogger logger, string path) : base(logger, path) { }
+    public Day02(ILogger logger, string path) : base(logger, path) { }
 
     public override void Setup()
     {

@@ -50,11 +50,16 @@ public partial class Day12 : Puzzle
 
     public override void SolvePart2()
     {
-        if (true)
+        if (false)
         {
             _logger.Log("\u001b[30;1mSolution disabled due to high computation time\u001b[0m");
-            return; 
+            return;
         }
+
+        Stack<Node>? cachedPathStack = new();
+        List<(int heightDiff, Node node)>? cachedAdjacencies = new();
+        List<Node>? cachedList = new();
+        PriorityQueue<Node, float>? cachedPriorityQueue = new();
 
         int min = int.MaxValue;
         var nodes = CreateNodeList();
@@ -68,8 +73,7 @@ public partial class Day12 : Puzzle
             if (p.y <= grid.GetLength(1) - 2 && grid[p.x, p.y + 1] == 1) isNextTo1 = true;
 
             if (!isNextTo1) continue;
-
-            var path = astar.FindPath(p, end);
+            var path = astar.FindPath(p, end, cachedPathStack, cachedPriorityQueue, cachedList, cachedAdjacencies);
 
             if (path == null)
                 continue;
@@ -202,14 +206,21 @@ public partial class Day12 : Puzzle
             Grid = grid;
         }
 
-        public Stack<Node>? FindPath((int x, int y) Start, (int x, int y) End)
+        public Stack<Node>? FindPath((int x, int y) Start, (int x, int y) End, Stack<Node>? cachedPathStack = null, PriorityQueue<Node, float>? cachedPriorityQueue = null, List<Node>? cachedList = null, List<(int heightDiff, Node node)>? cachedAdjacencies = null)
         {
             Node start = Grid[Start.x][Start.y];
             Node end = Grid[End.x][End.y];
 
-            Stack<Node> Path = new Stack<Node>();
-            PriorityQueue<Node, float> OpenList = new PriorityQueue<Node, float>();
-            List<Node> ClosedList = new List<Node>();
+            Stack<Node> Path = cachedPathStack ?? new();
+            PriorityQueue<Node, float> OpenList = cachedPriorityQueue ?? new();
+            List<Node> ClosedList = cachedList ?? new();
+            List<(int heightDiff, Node node)> adjacencies = cachedAdjacencies ?? new();
+
+            cachedPathStack?.Clear();
+            cachedPriorityQueue?.Clear();
+            cachedList?.Clear();
+            cachedAdjacencies?.Clear();
+
             Node current = start;
 
             // add start node to Open List
@@ -220,8 +231,7 @@ public partial class Day12 : Puzzle
                 current = OpenList.Dequeue();
                 ClosedList.Add(current);
 
-                List<(int heightDiff, Node node)> adjacencies;
-                adjacencies = GetAdjacentNodes(current);
+                GetAdjacentNodes(current, adjacencies);
 
                 foreach (var (heightDiff, n) in adjacencies)
                 {
@@ -263,32 +273,32 @@ public partial class Day12 : Puzzle
             return Path;
         }
 
-        private List<(int heightDiff, Node node)> GetAdjacentNodes(Node n)
+        private void GetAdjacentNodes(Node n, List<(int heightDiff, Node node)> result)
         {
             // Alter to check height
-            List<(int heightDiff, Node node)> temp = new();
+            result.Clear();
 
             int row = n.Position.Y;
             int col = n.Position.X;
 
             if (row + 1 < GridRows)
             {
-                AddTemp(temp, col, row + 1, col, row);
+                AddTemp(result, col, row + 1, col, row);
             }
             if (row - 1 >= 0)
             {
-                AddTemp(temp, col, row - 1, col, row);
+                AddTemp(result, col, row - 1, col, row);
             }
             if (col - 1 >= 0)
             {
-                AddTemp(temp, col - 1, row, col, row);
+                AddTemp(result, col - 1, row, col, row);
             }
             if (col + 1 < GridCols)
             {
-                AddTemp(temp, col + 1, row, col, row);
+                AddTemp(result, col + 1, row, col, row);
             }
 
-            return temp;
+
 
             void AddTemp(List<(int heightDiff, Node node)> temp, int col, int row, int myCol, int myRow)
             {

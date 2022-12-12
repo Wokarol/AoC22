@@ -50,14 +50,25 @@ public partial class Day12 : Puzzle
 
     public override void SolvePart2()
     {
-        _logger.Log("\u001b[30;1mSolution disabled due to high computation time\u001b[0m");
-        return;
+        if (true)
+        {
+            _logger.Log("\u001b[30;1mSolution disabled due to high computation time\u001b[0m");
+            return; 
+        }
 
         int min = int.MaxValue;
         var nodes = CreateNodeList();
         var astar = new Astar(nodes);
         foreach (var p in lowPoints)
         {
+            bool isNextTo1 = false;
+            if (p.x >= 1 && grid[p.x - 1, p.y] == 1) isNextTo1 = true;
+            if (p.y >= 1 && grid[p.x, p.y - 1] == 1) isNextTo1 = true;
+            if (p.x <= grid.GetLength(0) - 2 && grid[p.x + 1, p.y] == 1) isNextTo1 = true;
+            if (p.y <= grid.GetLength(1) - 2 && grid[p.x, p.y + 1] == 1) isNextTo1 = true;
+
+            if (!isNextTo1) continue;
+
             var path = astar.FindPath(p, end);
 
             if (path == null)

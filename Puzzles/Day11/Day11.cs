@@ -37,17 +37,6 @@ public partial class Day11 : Puzzle
 
     public override void SolvePart1()
     {
-        //int r = 1;
-        //foreach (var monkeys in Simulate().Take(20))
-        //{
-        //    _logger.Log($"\n\u001b[31mRound: {r}\u001b[0m");
-        //    r++;
-        //    for (int i = 0; i < monkeys.Length; i++)
-        //    {
-        //        _logger.Log($"Monkey {i}: {string.Join(", ", monkeys[i].Items)}");
-        //    }
-        //}
-
         var monkeyBusiness = Simulate(true)
             .Take(20)
             .Last()
@@ -136,8 +125,8 @@ public partial class Day11 : Puzzle
 
     private class Monkey
     {
-        public List<ulong> Items { get; init; }
-        public MonkeyDefinition Properties { get; init; }
+        public List<ulong>? Items { get; init; }
+        public MonkeyDefinition? Properties { get; init; }
 
         public ulong InspectionCount { get; private set; } = 0;
 

@@ -40,6 +40,12 @@ public partial class Day12 : Puzzle
 
     public override void SolvePart1()
     {
+        if (true)
+        {
+            _logger.Log("\u001b[30;1mSolution disabled due to high computation time\u001b[0m");
+            return;
+        }
+
         var nodes = CreateNodeList();
         var astar = new Astar(nodes);
         var path = astar.FindPath(start, end);
@@ -50,7 +56,7 @@ public partial class Day12 : Puzzle
 
     public override void SolvePart2()
     {
-        if (false)
+        if (true)
         {
             _logger.Log("\u001b[30;1mSolution disabled due to high computation time\u001b[0m");
             return;

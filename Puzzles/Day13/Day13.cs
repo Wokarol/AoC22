@@ -8,7 +8,7 @@ namespace AoC22;
 
 public partial class Day13 : Puzzle
 {
-    private List<string> packets = new();
+    private List<string> packets;
     private PacketIterator firstIterator = new();
     private PacketIterator secondIterator = new();
 
@@ -16,6 +16,7 @@ public partial class Day13 : Puzzle
 
     public override void Setup()
     {
+        packets = new(460);
         foreach (var line in Utils.ReadAllLines(_path))
         {
             if (string.IsNullOrWhiteSpace(line))

@@ -32,7 +32,7 @@ for (int i = START_DAY; i <= STOP_DAY; i++)
         puzzle.Setup();
 
         puzzle.SolvePart1();
-        puzzle.SolvePart2(); 
+        puzzle.SolvePart2();
     }
 
     logger.Log("");
@@ -40,32 +40,30 @@ for (int i = START_DAY; i <= STOP_DAY; i++)
 
 //BenchmarkRunner.Run<Bench>();
 
-[Config(typeof(FastConfig))]
+[MemoryDiagnoser]
 public class Bench
 {
-    public static IEnumerable<Puzzle> GetPuzzles()
+    Puzzle puzzle1 = new Day13(new TestLogger(), Utils.FullPath(13));
+    Puzzle puzzle2 = new Day13(new TestLogger(), Utils.FullPath(13));
+
+    public void Setup()
     {
-        var logger = new TestLogger();
-        yield return new Day01(logger, Utils.FullPath(1));
-        yield return new Day02(logger, Utils.FullPath(2));
-        yield return new Day03(logger, Utils.FullPath(3));
-        yield return new Day04(logger, Utils.FullPath(4));
-        yield return new Day05(logger, Utils.FullPath(5));
-        yield return new Day06(logger, Utils.FullPath(6));
-        yield return new Day07(logger, Utils.FullPath(7));
-        yield return new Day08(logger, Utils.FullPath(8));
-        yield return new Day09(logger, Utils.FullPath(9));
-        yield return new Day10(logger, Utils.FullPath(10));
-        yield return new Day11(logger, Utils.FullPath(11));
+        puzzle2.Setup();
     }
 
+    //[Benchmark]
+    //public void Day13WithSetup()
+    //{
+    //    puzzle1.Setup();
+    //    puzzle1.SolvePart1();
+    //    puzzle1.SolvePart2();
+    //}
+
     [Benchmark]
-    [ArgumentsSource(nameof(GetPuzzles))]
-    public void RunPuzzle(Puzzle puzzle)
+    public void Day13WithNoSetup()
     {
-        puzzle.Setup();
-        puzzle.SolvePart1();
-        puzzle.SolvePart2();
+        puzzle2.SolvePart1();
+        puzzle2.SolvePart2();
     }
 }
 public class FastConfig : ManualConfig

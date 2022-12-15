@@ -56,21 +56,30 @@ public partial class Day15 : Puzzle
 
         int y = 2000000;
 
+        Span<(int start, int end)> slices = stackalloc (int start, int end)[readings.Count];
+
+        for (int i = 0; i < readings.Count; i++)
+        {   
+            int yDiff = y - readings[i].Pos.Y;
+            int xOff = readings[i].Distance - Math.Abs(yDiff);
+
+            slices[i] = (readings[i].Pos.X - xOff, readings[i].Pos.X + xOff);
+        }
+
         int invalidSpots = 0;
         for (int x = xStart; x <= xEnd; x++)
         {
             if (taken.Contains(new(x, y)))
                 continue;
 
-            Vector2Int cell = new(x, y);
             bool isWithinReachOfAnySensor = false;
-            for (int i = 0; i < readings.Count; i++)
+            for (int i = 0; i < slices.Length; i++)
             {
-                Vector2Int sPos = readings[i].Pos;
-                int dist = ManhattanDistance(sPos, cell);
-                if (dist <= readings[i].Distance)
+                var (leftX, rightX) = slices[i];
+                if (x >= leftX && x <= rightX)
                 {
                     isWithinReachOfAnySensor = true;
+                    break;
                 }
             }
 
@@ -84,6 +93,12 @@ public partial class Day15 : Puzzle
 
     public override void SolvePart2()
     {
+        if (true)
+        {
+            _logger.LogHighComputationTime();
+            return;
+        }
+
         int max = 4000000;
 
         for (int i = 0; i < readings.Count; i++)

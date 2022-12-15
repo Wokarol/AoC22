@@ -91,8 +91,12 @@ public partial class Day14 : Puzzle
 
     public override void SolvePart2()
     {
-        //map.PrintMap(_logger.Log, (500, 0));
-     
+        if (true)
+        {
+            _logger.LogHighComputationTime();
+            return;
+        }
+
         map.DrawLine(100, map.Bounds.YMax + 2, 900, map.Bounds.YMax + 2);
 
         HashSet<(int x, int y)> sand = new();

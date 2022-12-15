@@ -4,12 +4,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Text.RegularExpressions;
+using static AoC22.Day12;
 
 namespace AoC22;
 
 public partial class Day15 : Puzzle
 {
+    HashSet<Vector2Int> taken = new();
     List<SensorReading> readings;
+
+    int xStart = int.MaxValue;
+    int xEnd = int.MinValue;
 
     public Day15(ILogger logger, string path) : base(logger, path) { }
 
@@ -30,45 +35,40 @@ public partial class Day15 : Puzzle
             );
             int dist = ManhattanDistance(pos, beacon);
 
+            taken.Add(pos);
+            taken.Add(beacon);
+
+
+            xStart = Math.Min(xStart, pos.X - dist);
+            xEnd = Math.Max(xEnd, pos.X + dist);
+
             readings.Add(new(pos, beacon, dist));
         }
     }
 
     public override void SolvePart1()
     {
-        int y = 2000000;
-        List<SensorReading> relevantSensors = new();
-        HashSet<int> taken = new();
-        int xStart = int.MaxValue;
-        int xEnd = int.MinValue;
-
-        for (int i = 0; i < readings.Count; i++)
+        if (true)
         {
-            var reading = readings[i];
-            if (Math.Abs(y - reading.Pos.Y) <= reading.Distance)
-            {
-                relevantSensors.Add(reading);
-                xStart = Math.Min(xStart, reading.Pos.X - reading.Distance);
-                xEnd = Math.Max(xEnd, reading.Pos.X + reading.Distance);
-            }
-
-            if (reading.ClosestBeacon.Y == y) taken.Add(reading.ClosestBeacon.X);
-            if (reading.Pos.Y == y) taken.Add(reading.Pos.X);
+            _logger.LogHighComputationTime();
+            return;
         }
+
+        int y = 2000000;
 
         int invalidSpots = 0;
         for (int x = xStart; x <= xEnd; x++)
         {
-            if (taken.Contains(x))
+            if (taken.Contains(new(x, y)))
                 continue;
 
             Vector2Int cell = new(x, y);
             bool isWithinReachOfAnySensor = false;
-            for (int i = 0; i < relevantSensors.Count; i++)
+            for (int i = 0; i < readings.Count; i++)
             {
-                Vector2Int sPos = relevantSensors[i].Pos;
+                Vector2Int sPos = readings[i].Pos;
                 int dist = ManhattanDistance(sPos, cell);
-                if (dist <= relevantSensors[i].Distance)
+                if (dist <= readings[i].Distance)
                 {
                     isWithinReachOfAnySensor = true;
                 }
@@ -84,65 +84,66 @@ public partial class Day15 : Puzzle
 
     public override void SolvePart2()
     {
-        List<SensorReading> relevantSensors = new();
-        HashSet<int> taken = new();
-        int xStart = 0;
-        int xEnd = 4000000;
-        int yStart = 0;
-        int yEnd = 4000000;
-
-        for (int y = yStart; y < yEnd; y++)
-        {
-            var x = SearchLine(y, relevantSensors, taken, xStart, xEnd);
-            if (x != null)
-            {
-                _logger.Log($"Found it at x = {x.Value} y = {y}");
-                _logger.Log(x.Value * 4000000 + y);
-            }
-
-            if (y % 4000 == 0)
-                _logger.Log($"Checked up to {(y * 100) / (float)yEnd:f2}%");
-        }
-    }
-
-    private int? SearchLine(int y, List<SensorReading> relevantSensors, HashSet<int> taken, int xStart, int xEnd)
-    {
-        relevantSensors.Clear();
-        taken.Clear();
+        int max = 4000000;
 
         for (int i = 0; i < readings.Count; i++)
         {
-            var reading = readings[i];
-            if (Math.Abs(y - reading.Pos.Y) <= reading.Distance)
-                relevantSensors.Add(reading);
-
-            if (reading.ClosestBeacon.Y == y) taken.Add(reading.ClosestBeacon.X);
-            if (reading.Pos.Y == y) taken.Add(reading.Pos.X);
-        }
-
-        for (int x = xStart; x <= xEnd; x++)
-        {
-            if (taken.Contains(x))
-                continue;
-
-            Vector2Int cell = new(x, y);
-            bool isWithinReachOfAnySensor = false;
-            for (int i = 0; i < relevantSensors.Count; i++)
+            for (int j = i + 1; j < readings.Count; j++)
             {
-                Vector2Int sPos = relevantSensors[i].Pos;
-                int dist = ManhattanDistance(sPos, cell);
-                if (dist <= relevantSensors[i].Distance)
+                var iPos = readings[i].Pos;
+                var jPos = readings[j].Pos;
+
+                var dist = ManhattanDistance(iPos, jPos);
+
+                if (dist == readings[i].Distance + readings[j].Distance + 2)
                 {
-                    isWithinReachOfAnySensor = true;
+                    foreach (var c in GetAllAround(readings[i].Pos, readings[i].Distance))
+                    {
+                        if (c.X < 0 || c.X > max) continue;
+                        if (c.Y < 0 || c.Y > max) continue;
+
+                        if (IsPointTarget(c.X, c.Y))
+                        {
+                            _logger.Log(c.X * 4000000L + c.Y);
+                            return;
+                        }
+                    }
                 }
             }
+        }
+    }
 
-            if (!isWithinReachOfAnySensor)
+    private IEnumerable<Vector2Int> GetAllAround(Vector2Int pos, int dist)
+    {
+        int targDist = dist + 1;
+        for (int i = 0; i <= targDist; i++)
+        {
+            int invI = targDist - i;
+            yield return pos + new Vector2Int(i, invI);
+            yield return pos + new Vector2Int(-i, invI);
+            yield return pos + new Vector2Int(-i, -invI);
+            yield return pos + new Vector2Int(i, -invI);
+        }
+    }
+
+    private bool IsPointTarget(int x, int y)
+    {
+        Vector2Int cell = new(x, y);
+
+        if (taken.Contains(cell))
+            return false;
+
+        for (int i = 0; i < readings.Count; i++)
+        {
+            Vector2Int sPos = readings[i].Pos;
+            int dist = ManhattanDistance(sPos, cell);
+            if (dist <= readings[i].Distance)
             {
-                return x;
+                return false;
             }
         }
-        return null;
+
+        return true;
     }
 
     private int ManhattanDistance(Vector2Int a, Vector2Int b)

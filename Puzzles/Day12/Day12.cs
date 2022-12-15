@@ -42,7 +42,7 @@ public partial class Day12 : Puzzle
     {
         if (true)
         {
-            _logger.Log("\u001b[30;1mSolution disabled due to high computation time\u001b[0m");
+            _logger.LogHighComputationTime();
             return;
         }
 
@@ -58,7 +58,7 @@ public partial class Day12 : Puzzle
     {
         if (true)
         {
-            _logger.Log("\u001b[30;1mSolution disabled due to high computation time\u001b[0m");
+            _logger.LogHighComputationTime();
             return;
         }
 

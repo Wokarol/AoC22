@@ -246,6 +246,8 @@ public static class Utils
 
     #endregion
 
+    public static void LogHighComputationTime(this ILogger logger) => logger.Log("\u001b[30;1mSolution disabled due to high computation time\u001b[0m");
+
 }
 
 /// <summary>For referencing a value type as a reference type. Useful if you want to edit a value inside of a Stack/Queue.</summary>

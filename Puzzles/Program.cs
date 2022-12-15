@@ -27,7 +27,7 @@ for (int i = START_DAY; i <= STOP_DAY; i++)
         continue;
     }
 
-    //Yikeusing (new Watch(""))
+    using (new Watch(""))
     {
         puzzle.Setup();
 
